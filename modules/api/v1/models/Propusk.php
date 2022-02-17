@@ -47,7 +47,10 @@ class Propusk extends Model
 
         $response = Json::decode($res->getBody(), true);
         if ($res->getStatusCode() == 200 && !empty($response) && $response[0]['isnotfound'] !== 1) {
-            return $this->getCurrentPass($response);
+            return [
+                'current_pass' => $this->getCurrentPass($response),
+                'pre_last_pass' => $this->getPreLastPassBB($response),
+            ];
         }
         $this->errorResponse();
     }
@@ -67,22 +70,37 @@ class Propusk extends Model
 
         $currentPass [] = [
             'pass_type' => 'BB_DAY',
-            'data' => self::getLastPass(self::PASSDAY,self::BB,$passList)
+            'data' => self::getLastPass(self::PASSDAY, self::BB, $passList)
         ];
         $currentPass [] = [
             'pass_type' => 'BB_NIGHT',
-            'data' => self::getLastPass(self::PASSNIGHT,self::BB,$passList)
+            'data' => self::getLastPass(self::PASSNIGHT, self::BB, $passList)
         ];
         $currentPass [] = [
             'pass_type' => 'BA_DAY',
-            'data' => self::getLastPass(self::PASSDAY,self::BA,$passList)
+            'data' => self::getLastPass(self::PASSDAY, self::BA, $passList)
         ];
         $currentPass [] = [
             'pass_type' => 'BA_NIGHT',
-            'data' => self::getLastPass(self::PASSNIGHT,self::BA,$passList)
+            'data' => self::getLastPass(self::PASSNIGHT, self::BA, $passList)
         ];
 
         return $currentPass;
+    }
+
+    /**
+     * @param array $passList
+     * @return array
+     */
+    public function getPreLastPassBB(array $passList)
+    {
+        $preLastPass = [];
+
+        $preLastPass [] = [
+            'data' => self::getPreLastPass(self::BB, $passList)
+        ];
+
+        return $preLastPass;
     }
 
     /**
@@ -95,36 +113,50 @@ class Propusk extends Model
     {
         $pass = [];
         foreach ($list as $item) {
-            if(strpos($item['seriya'], $seriya) !== false && $item['passtime'] == $type) {
-                $pass [] = $item; 
+            if (strpos($item['seriya'], $seriya) !== false && $item['passtime'] == $type) {
+                $pass [] = $item;
             }
         }
         return self::getPassMaxDate($pass);
     }
 
     /**
-     * @param $type
      * @param $list
      * @param $seriya
      * @return array
      */
-    public static function getPreLastPass($type, $seriya, $list)
+    public static function getPreLastPass($seriya, $list)
     {
         $pass = [];
-        return $pass;
+
+        foreach ($list as $pos => $item) {
+            if (strpos($item['seriya'], $seriya) !== false) {
+                $pass [] = [
+                    'data' => $item,
+                    'pos' => $pos
+                ];
+            }
+        }
+        if (count($pass) <= 1) {
+            return [];
+        }
+        $prePass ['date'] = $pass[1]['data']['dateend'];
+        $prePass ['isDouble'] = (($pass[0]['pos'] + 1) === $pass[1]['pos']) ? 'Да' : '-' ;
+        return $prePass;
     }
 
     /**
      * @param $list
      * @return array|mixed
      */
-    public static function getPassMaxDate($list) {
+    public static function getPassMaxDate($list)
+    {
         $maxPass = [];
         foreach ($list as $k => $item) {
-            if(empty($maxPass)) {
+            if (empty($maxPass)) {
                 $maxPass = $item;
             }
-            $maxPass = strtotime( $item['datestart']) > $maxPass ? $item : $maxPass;
+            $maxPass = strtotime($item['datestart']) > $maxPass ? $item : $maxPass;
         }
         return $maxPass;
     }
