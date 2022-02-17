@@ -21,8 +21,11 @@ class AppAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         'css/site.css',
+        'css/spinner.css',
     ];
     public $js = [
+        'js/main.js',
+        'js/jquery.inputmask.bundle.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
