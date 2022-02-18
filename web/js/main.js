@@ -297,6 +297,7 @@ $(document).ready(function () {
     }
 
     $(document).on('click', '#check', function () {
+        $('.table').html('');
         let avtoNumber = $('#propusk').val();
         if (avtoNumber.length) {
             $('.loader').removeClass('hidden');
@@ -306,150 +307,149 @@ $(document).ready(function () {
             }).done(function (data) {
                 console.log(data);
                 $('.loader').addClass('hidden');
+                if(data.statusCode == 200){
+                    parseData(data);
+                } else {
+                    $('.table').html('');
+                }
             }).fail(function (err) {
-
+                $('.table').html(err.responseJSON.message);
+                $('.loader').addClass('hidden');
             });
         }
     })
 
     function parseData(obj) {
 
-        if (obj!= "fail" && obj.lenght!=0  && obj!= "try" && obj!= "error" && obj!= "database" && obj!= "wait") {
+        if (obj.lenght!=0) {
             var tabl =  '<div class="title-items">'+
-                '<div class="result-item-piece col-01">Номер авто</div>'+
-                '<div class="result-item-piece col-02">Тип пропуска</div>'+
-                '<div class="result-item-piece col-03">Серия</div>'+
-                '<div class="result-item-piece col-04">Дата начала</div>'+
-                '<div class="result-item-piece col-05">Дата окончания</div>'+
-                '<div class="result-item-piece col-06">Статус</div>'+
+                '<div class="result-item-piece col-01">Пропуск</div>'+
+                '<div class="result-item-piece col-02">Статус</div>'+
+                '<div class="result-item-piece col-03">Дата окончания</div>'+
+                '<div class="result-item-piece col-04">Осталось дней</div>'+
                 '</div>';
 
             var counter = 0;
             var isCache = 0;
             var timeCache = '';
-
-            for(a in obj) {
-                if (obj[a]['isnotfound'] == 500 || obj[a]['isnotfound'] == 1 || obj[a]['isnotfound'] == 404) {
-                    console.log(obj);
-                    window.messageForShares.push('Пропуск в базе департамента не найден');
-                    $(".vow").find('.js-vow-text').html(window.messageForShares[window.messageForShares.length-1]);
-                    $(".vow").show();
-                    $(".ser").hide();
-                    $(".table").hide();
-                    $(".js-block-btn").show();
-                    $(".js-block-btn-more").hide();
-                    $(".js-block-btn-2-more").hide();
-                    $(".js-hide-after-result").hide();
-                    $(".js-hide-after-result-always").hide();
+            let currentPass = obj['data']['current_pass'];
+            for(a in currentPass) {
+                // if (currentPass[a]['data']['isnotfound'] == 500 || currentPass[a]['data']['isnotfound'] == 1 || currentPass[a]['data']['isnotfound'] == 404) {
+                //     console.log(obj);
+                //     window.messageForShares.push('Пропуск в базе департамента не найден');
+                //     $(".vow").find('.js-vow-text').html(window.messageForShares[window.messageForShares.length-1]);
+                //     $(".vow").show();
+                //     $(".ser").hide();
+                //     $(".table").hide();
+                //     $(".js-block-btn").show();
+                //     $(".js-block-btn-more").hide();
+                //     $(".js-block-btn-2-more").hide();
+                //     $(".js-hide-after-result").hide();
+                //     $(".js-hide-after-result-always").hide();
+                // }
+                // else {
+                //     if (currentPass[a]['data']['cache'] == 1) {
+                //         isCache = 1;
+                //         timeCache = currentPass[a]['data']['lastchecktime'];
+                //     }
+                let passType = currentPass[a]['pass_type'];
+                switch (passType) {
+                    case 'BB_DAY' : passType = 'Временный дневной'
+                        break;
+                    case 'BB_NIGHT' : passType = 'Временный ночной'
+                        break;
+                    case 'BA_DAY' : passType = 'Годовой дневной'
+                        break;
+                    case 'BA_NIGHT' : passType = 'Годовой ночной'
+                        break;
                 }
-                else {
-                    if (obj[a]['cache'] == 1) {
-                        isCache = 1;
-                        timeCache = obj[a]['lastchecktime'];
-                    }
-                    var date1 = obj[a]['lastchecktime'];
+                if(currentPass[a]['data'].hasOwnProperty('lastchecktime')){
+                    var date1 = currentPass[a]['data'].lastchecktime;
                     var date1date = date1.split(' ')[0];
                     var date1time = date1.split(' ')[1];
-                    var date2 = obj[a]['dateend'];
+                    var date2 = currentPass[a]['data'].dateend;
                     var date2date = date2.split(' ')[0];
                     var date2time = date2.split(' ')[1];
 
                     date1 = new Date(date1date.split('.').reverse().join('-') );
-                    date2 = new Date(date2date.split('.').reverse().join('-') );
+                    // date2 = new Date(date2date.split('.').reverse().join('-') );
 
-                    var r = obj[a]['info'];//Math.round((date2.getTime() - date1.getTime())/1000/60/60/24);
+                    var r = typeof(currentPass[a]['data']['info']) === 'number' ? "Осталось "+ currentPass[a]['data']['info'] +' дней'  : '-'  ;//Math.round((date2.getTime() - date1.getTime())/1000/60/60/24);
 
-                    if (obj[a]['colorstatus']=="CANCELED") {
+                    if (currentPass[a]['data']['colorstatus']=="CANCELED") {
                         var color = " -canceled";
-                        window.messageForShares.push('К сожалению пропуск для авто '+obj[a]['number']+' аннулирован '+obj[a]['cancelationdate']+'\n' +
-                            'Сервис проверки пропусков\n' +
-                            'proverit-propusk.info');
+                        // window.messageForShares.push('К сожалению пропуск для авто '+currentPass[a]['data']['number']+' аннулирован '+currentPass[a]['data']['cancelationdate']+'\n' +
+                        //     'Сервис проверки пропусков\n' +
+                        //     'proverit-propusk.info');
                     }
-                    if (obj[a]['colorstatus']=="EXPIRED") {
+                    if (currentPass[a]['data']['colorstatus']=="EXPIRED") {
                         var color = " -expired";
-                        window.messageForShares.push('Пропуск для авто '+obj[a]['number']+' на '+obj[0]['propusktype']+' закончился '+obj[0]['dateend']+'\n' +
-                            'Сервис проверки пропусков\n' +
-                            'proverit-propusk.info');
+                        // window.messageForShares.push('Пропуск для авто '+currentPass[a]['data']['number']+' на '+obj[0]['propusktype']+' закончился '+obj[0]['dateend']+'\n' +
+                        //     'Сервис проверки пропусков\n' +
+                        //     'proverit-propusk.info');
                     }
-                    if (obj[a]['colorstatus']=="EXPIRING") {
+                    if (currentPass[a]['data']['colorstatus']=="EXPIRING") {
                         var color = " -expiring";
-                        window.messageForShares.push('Пропуск для авто '+obj[a]['number']+' на '+obj[0]['propusktype']+' заканчивается '+obj[0]['dateend']+'\n' +
-                            'Сервис проверки пропусков\n' +
-                            'proverit-propusk.info');
+                        // window.messageForShares.push('Пропуск для авто '+currentPass[a]['data']['number']+' на '+obj[0]['propusktype']+' заканчивается '+obj[0]['dateend']+'\n' +
+                        //     'Сервис проверки пропусков\n' +
+                        //     'proverit-propusk.info');
                     }
-                    if (obj[a]['colorstatus']=="ACTIVE") {
+                    if (currentPass[a]['data']['colorstatus']=="ACTIVE") {
                         var color;
                         if (r <= 14) color = " -expiring-active";
                         else color = " -active";
-                        window.messageForShares.push('Пропуск для авто '+obj[0]['number']+' на '+obj[0]['propusktype']+' действует по '+obj[0]['dateend']+' осталось еще '+obj[0]['daysleft']+' дней.\n' +
-                            'Сервис проверки пропусков\n' +
-                            'proverit-propusk.info');
+                        // window.messageForShares.push('Пропуск для авто '+obj[0]['number']+' на '+obj[0]['propusktype']+' действует по '+obj[0]['dateend']+' осталось еще '+obj[0]['daysleft']+' дней.\n' +
+                        //     'Сервис проверки пропусков\n' +
+                        //     'proverit-propusk.info');
 
                     }
-
                     tabl += '<div class="result-item '+(counter < 8 ? ' -desktop-show' : '')+(counter < 4 ? ' -mobile-show' : '')+color+'">'+
                         '<div class="result-item-piece -number">'+
-                        '<span class="number-n">'+obj[a].number.substring(0,6)+'</span>'+
-                        '<div class="reg-item">'+
-                        '<span class="region-num">'+obj[a].number.substring(6,9)+'</span><span class="russia">RUS</span>'+
+                        passType +
                         '</div>'+
-                        '</div>'+
-                        '<div class="result-item-piece -type">'+obj[a].propusktype+ '<br><small>' + obj[a].passtime +  '</small></div>'+
-                        '<div class="result-item-piece -seriya">'+obj[a].seriya+'</div>'+
-                        '<div class="result-item-piece -datestart">'+obj[a].datestart.split(' ')[0]+'</div>'+
-                        '<div class="result-item-piece -dateend">'+obj[a].dateend.split(' ')[0]+'<span class="m-on-inline">&nbsp;включительно</span></div>'+
-                        '<div class="result-item-piece -status">';
-                    if (obj[a]['colorstatus'] == "EXPIRED")
-                        tabl += "Закончился";
-                    else if(r == 0)
-                        tabl += "Осталось 0 дней";
-                    else if(obj[a]['info'] == "Аннулирован")
-                        tabl += 'Аннулирован '+obj[a].cancelationdate;
+                        '<div class="result-item-piece -type">';
+                    if (currentPass[a]['data']['colorstatus'] == "EXPIRED")
+                        tabl += "Закончен";
+                    else if(currentPass[a]['data']['colorstatus'] == "ACTIVE")
+                        tabl += "Действует";
+                    else if(currentPass[a]['data']['colorstatus'] == "EXPIRING")
+                        tabl += 'Заканчивается сегодня';
                     else
-                        tabl += "Осталось "+r+' дней';
+                        tabl += "Аннулирован ";
                     tabl += '</div>'+
+                        '<div class="result-item-piece -dateend">'+ date2date +'</div>'+
+                        '<div class="result-item-piece -dateend">'+ r +'</div>'+
                         '</div>';
+                } else {
+                    tabl += '<div class="result-item '+(counter < 8 ? ' -desktop-show' : '')+(counter < 4 ? ' -mobile-show' : '')+'">'+
+                        '<div class="result-item-piece -number">'+
+                        passType +
+                        '</div>'+
+                        '<div class="result-item-piece -type">-';
+
+                    tabl += '</div>'+
+                        '<div class="result-item-piece -dateend">-</div>'+
+                        '<div class="result-item-piece -dateend">-</div>'+
+                        '</div>';
+                }
+
+
+
 
                     counter ++;
                     //if (counter == 7) break;
-                }
+                // }
             }
 
             $(".table").html(tabl);
 
-            if (isCache == 1) {
-                var time = 'База департаменты недоступна, попробуйте сделать проверку позже, показаны результаты последней проверки от '+timeCache+'';
-                //$("#time").html(time).show();
-            }
-        }
-        else if(obj== "try") {
-            window.messageForShares.push('Пропуск в базе департамента не найден.');
-            $(".vow").find('.js-vow-text').html(window.messageForShares[window.messageForShares.length-1]);
-            $(".vow").show();
-        }
-        else if(obj== 1) {
-            window.messageForShares.push( 'Ошибка сервера, повторите позже.');
-            $(".vow").find('.js-vow-text').html(window.messageForShares[window.messageForShares.length-1]);
-            $(".vow").show();
-        }
-        else if(obj== "database") {
-            window.messageForShares.push('Cервер временно не доступен, попробуйте позже.');
-            $(".vow").find('.js-vow-text').html(window.messageForShares[window.messageForShares.length-1]);
-            $(".vow").show();
-        }
-        else if(obj== "wait") {
-            window.messageForShares.push('Cервер поиска нагружен, сделайте повторный поиск.');
-            $(".vow").find('.js-vow-text').html(window.messageForShares[window.messageForShares.length-1]);
-            $(".vow").show();
         }
 
         $(".js-loader").hide();
         $(".table").show();
         $(".js-block-btn").show();
         $(".js-block-btn-more").show();
-        if ($.cookie('prov_prop_count') > 3) {
-            $(".js-block-btn-2-more").show();
-        }
+
         $(".js-hide-after-result").hide();
         $(".js-hide-after-result-always").hide();
 

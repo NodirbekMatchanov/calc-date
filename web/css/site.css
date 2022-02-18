@@ -828,7 +828,7 @@ ul.custom-li li {
     font-weight: bold;
     text-transform: none;
     position: relative;
-    width: 17%;
+    width: 25%;
     display: -webkit-flex;
     display: -moz-flex;
     display: -ms-flex;
@@ -839,7 +839,7 @@ ul.custom-li li {
     align-items: center;
 }
 .result-item .result-item-piece.-type {
-    width: 15%;
+    width: 20%;
     font-weight: bold;
 }
 .result-item .result-item-piece.-seriya {
@@ -849,7 +849,7 @@ ul.custom-li li {
     width: 17%;
 }
 .result-item .result-item-piece.-dateend {
-    width: 17%;
+    width: 28%;
 }
 .result-item .result-item-piece.-status {
     width: 30%;
@@ -915,17 +915,17 @@ ul.custom-li li {
 }
 
 .title-items .col-01 {
-    width: 17%;
+    width: 25%;
 }
 .title-items .col-02 {
-    width: 15%;
+    width: 20%;
 }
 .title-items .col-03 {
-    width: 15%;
-    text-align: left;
+    width: 28%;
+    text-align: center;
 }
 .title-items .col-04 {
-    width: 17%;
+    width: 28%;
 }
 .title-items .col-05 {
     width: 17%;
@@ -1517,18 +1517,12 @@ ul.custom-li li {
         order: 3;
         width: auto;
     }
-    .result-item-piece.-datestart:before {
-        content: 'c ';
-        display: inline;
-    }
+
     .result-item-piece.-dateend {
         order: 4;
         width: auto;
     }
-    .result-item-piece.-dateend:before {
-        content: 'до ';
-        display: inline;
-    }
+
     .result-item-piece.-status {
         order: 5;
         width: 70%;

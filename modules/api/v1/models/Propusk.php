@@ -46,18 +46,23 @@ class Propusk extends Model
         }
 
         $response = Json::decode($res->getBody(), true);
-        if ($res->getStatusCode() == 200 && !empty($response) && $response[0]['isnotfound'] !== 1) {
+        if ($res->getStatusCode() == 200 && !empty($response[0]) && $response[0]['isnotfound'] !== 1) {
             return [
                 'current_pass' => $this->getCurrentPass($response),
                 'pre_last_pass' => $this->getPreLastPassBB($response),
             ];
         }
-        $this->errorResponse();
+        $this->notFoundPassResponse();
     }
 
     public function errorResponse()
     {
         throw new \yii\web\HttpException(500, 'API не доступен');
+    }
+
+    public function notFoundPassResponse()
+    {
+        throw new \yii\web\HttpException(404, 'Пропуск не найден');
     }
 
     /**

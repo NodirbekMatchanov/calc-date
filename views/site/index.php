@@ -37,6 +37,7 @@ $this->title = 'Калькулятор дат';
                 <div class="col-md-12 col-sm-12 col-xs-12 text-center js-hide-after-result" style="display: none;">
                     <p>Проверяем пропуск. Обычно проверка занимает до 90 секунд...</p>
                 </div>
+                <div class="table"></div>
             </div>
         </form>
     </div>
