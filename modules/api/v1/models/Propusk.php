@@ -2,6 +2,7 @@
 
 namespace app\modules\api\v1\models;
 
+use app\components\DateFormat;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ServerException;
@@ -50,6 +51,7 @@ class Propusk extends Model
             return [
                 'current_pass' => $this->getCurrentPass($response),
                 'pre_last_pass' => $this->getPreLastPassBB($response),
+                'possible_date_pass' => $this->getPossibleDatePass($response),
             ];
         }
         $this->notFoundPassResponse();
@@ -187,8 +189,9 @@ class Propusk extends Model
      * @param array $list
      * @return array
      */
-    public static function getPossibleDatePass($seriya, array $list)
+    public function getPossibleDatePass(array $list)
     {
+        setlocale(LC_ALL, 'ru_RU', 'ru_RU.UTF-8', 'ru', 'russian');
         $possibleDatePass = [
             'BB_DAY' => '-',
             'BB_NIGHT' => '-',
@@ -197,13 +200,55 @@ class Propusk extends Model
         ];
         foreach ($list as $pass) {
             /* Временный дневной */
-            $bb = self::getActivePass(self::BB, self::PASSDAY, $list);
-            $ba = self::getActivePass(self::BA, self::PASSDAY, $list);
-            $preLast = self::getPreLastPass(self::BB, $list);
-            if (empty($bb) && empty($ba) && ($preLast['info'] == 0 || !$preLast['info'] || $preLast['info'] > 30)) {
-                $possibleDatePass['BB_DAY'] = date('d.m.Y H:i:m W');
-            } elseif ($preLast['info'] < 30){
+            $bb = self::getActivePass( self::PASSDAY, self::BB, $list);
+            $ba = self::getActivePass( self::PASSDAY,self::BA,  $list);
 
+            $preLast = self::getPreLastPass(self::BB, $list);
+            if ((empty($bb) || empty($ba)) && ($preLast['info'] == 0 || !$preLast['info'] || $preLast['info'] > 30)) {
+                $possibleDatePass['BB_DAY'] = date('d.m.Y H:i '). DateFormat::getWeekToString();
+            } elseif ($preLast['info'] < 30) {
+                $possibleDatePass['BB_DAY'] = date('d.m.Y H:i ',strtotime($preLast['date']) + (30 * 24 * 3600)). DateFormat::getWeekToString();
+            } elseif (!empty($ba)) {
+                $possibleDatePass['BB_DAY'] =  date('d.m.Y H:i ',strtotime($ba[0]['dateend']) - (4 * 24 * 3600)). DateFormat::getWeekToString();
+            } elseif (!empty($bb) && ($preLast['info'] > 30 || $preLast['info'] == 0 || !$preLast['info'])) {
+                $possibleDatePass['BB_DAY'] = date('d.m.Y H:i ',strtotime($bb[0]['dateend']) - (4 * 24 * 3600)). DateFormat::getWeekToString();
+            } elseif (empty($bb) && empty($ba) && $preLast['info'] < 30) {
+                $possibleDatePass['BB_DAY'] = date('d.m.Y H:i ',strtotime($preLast['date']) + (30 * 24 * 3600)). DateFormat::getWeekToString();
+            }
+            /* ___ */
+
+            /* Временный ночной */
+            $bb = self::getActivePass( self::PASSNIGHT, self::BB, $list);
+            $ba = self::getActivePass(self::PASSNIGHT, self::BA, $list);
+            $preLast = self::getPreLastPass(self::BB, $list);
+            if ((empty($bb) || empty($ba)) && ($preLast['info'] == 0 || !$preLast['info'] || $preLast['info'] > 30)) {
+                $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i '). DateFormat::getWeekToString();
+            } elseif ($preLast['info'] < 30) {
+                $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i ',strtotime($preLast['date']) + (30 * 24 * 3600)). DateFormat::getWeekToString();
+            } elseif (!empty($ba)) {
+                $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i ',strtotime($ba[0]['dateend']) - (4 * 24 * 3600)). DateFormat::getWeekToString();
+            } elseif (!empty($bb) && ($preLast['info'] > 30 || $preLast['info'] == 0 || !$preLast['info'])) {
+                $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i ',strtotime($bb[0]['dateend']) - (4 * 24 * 3600)). DateFormat::getWeekToString();
+            } elseif (empty($bb) && empty($ba) && $preLast['info'] < 30) {
+                $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i ',strtotime($preLast['date']) + (30 * 24 * 3600)). DateFormat::getWeekToString();
+            }
+            /* ___ */
+
+            /* Годовой дневной */
+            $ba = self::getActivePass( self::PASSDAY,self::BA, $list);
+            if (!empty($ba) && $ba[0]['info'] > 60) {
+                $possibleDatePass['BA_DAY'] = date('d.m.Y H:i ',strtotime($ba[0]['dateend']) - (60 * 24 * 3600)). DateFormat::getWeekToString();
+            } else {
+                $possibleDatePass['BA_DAY'] = date('d.m.Y H:i '). DateFormat::getWeekToString();
+            }
+            /* ___ */
+
+            /* Годовой дневной */
+            $ba = self::getActivePass( self::PASSNIGHT,self::BA, $list);
+            if (!empty($ba) && $ba[0]['info'] > 60) {
+                $possibleDatePass['BA_NIGHT'] = date('d.m.Y H:i ',strtotime($ba[0]['dateend']) - (60 * 24 * 3600)). DateFormat::getWeekToString();;
+            } else {
+                $possibleDatePass['BA_NIGHT'] = date('d.m.Y H:i '). DateFormat::getWeekToString();
             }
             /* ___ */
 
