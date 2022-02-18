@@ -322,7 +322,7 @@ $(document).ready(function () {
     function parseData(obj) {
 
         if (obj.lenght!=0) {
-            var tabl =  '<div class="title-items">'+
+            var tabl =  '<h4>Текущие пропуска</h4><div class="title-items">'+
                 '<div class="result-item-piece col-01">Пропуск</div>'+
                 '<div class="result-item-piece col-02">Статус</div>'+
                 '<div class="result-item-piece col-03">Дата окончания</div>'+
@@ -437,11 +437,28 @@ $(document).ready(function () {
 
 
                     counter ++;
-                    //if (counter == 7) break;
-                // }
             }
 
-            $(".table").html(tabl);
+            $(".table-current-pass").html(tabl);
+
+            let preLastPass = obj['data']['pre_last_pass'][0], preLastDate = '', isPreLastDouble = '-';
+
+            if(preLastPass.hasOwnProperty('date')){
+                preLastDate = preLastPass.date.split(' ')[0];
+                isPreLastDouble = preLastPass.isDouble;
+            }
+
+            var tabl =  '<div class="title-items">'+
+                '<div class="result-item-piece col-01">Дата окончания предпоследнего ББ</div>'+
+                '<div class="result-item-piece col-01">'+ preLastDate +'</div>'+
+                '</div>';
+            tabl += '<div class="result-item">'+
+                '<div class="result-item-piece -number">2 ББ подряд</div>' +
+                '<div class="result-item-piece -number">'+
+                isPreLastDouble +
+                '</div>' +
+                '</div>';
+            $(".table-pre-pass").html(tabl);
 
         }
 

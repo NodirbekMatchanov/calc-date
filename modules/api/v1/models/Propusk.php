@@ -101,20 +101,18 @@ class Propusk extends Model
     {
         $preLastPass = [];
 
-        $preLastPass [] = [
-            'data' => self::getPreLastPass(self::BB, $passList)
-        ];
+        $preLastPass [] = self::getPreLastPass(self::BB, $passList);
 
         return $preLastPass;
     }
 
     /**
      * @param $type
-     * @param $list
+     * @param $list array
      * @param $seriya
      * @return array
      */
-    public static function getLastPass($type, $seriya, $list)
+    public static function getLastPass($type, $seriya, array $list)
     {
         $pass = [];
         foreach ($list as $item) {
@@ -126,11 +124,28 @@ class Propusk extends Model
     }
 
     /**
-     * @param $list
+     * @param $type
+     * @param $list array
+     * @param $seriya
+     * @return bool
+     */
+    public static function getActivePass($type, $seriya, array $list)
+    {
+        $pass = [];
+        foreach ($list as $item) {
+            if (strpos($item['seriya'], $seriya) !== false && $item['passtime'] == $type && $item['colorstatus'] === 'ACTIVE') {
+                $pass [] = $item;
+            }
+        }
+        return $pass;
+    }
+
+    /**
+     * @param $list array
      * @param $seriya
      * @return array
      */
-    public static function getPreLastPass($seriya, $list)
+    public static function getPreLastPass($seriya, array $list)
     {
         $pass = [];
 
@@ -146,15 +161,16 @@ class Propusk extends Model
             return [];
         }
         $prePass ['date'] = $pass[1]['data']['dateend'];
-        $prePass ['isDouble'] = (($pass[0]['pos'] + 1) === $pass[1]['pos']) ? 'Да' : '-' ;
+        $prePass ['info'] = $pass[1]['data']['info'];
+        $prePass ['isDouble'] = (($pass[0]['pos'] + 1) === $pass[1]['pos']) ? 'Да' : '-';
         return $prePass;
     }
 
     /**
-     * @param $list
+     * @param $list array
      * @return array|mixed
      */
-    public static function getPassMaxDate($list)
+    public static function getPassMaxDate(array $list)
     {
         $maxPass = [];
         foreach ($list as $k => $item) {
@@ -164,6 +180,35 @@ class Propusk extends Model
             $maxPass = strtotime($item['datestart']) > $maxPass ? $item : $maxPass;
         }
         return $maxPass;
+    }
+
+    /**
+     * @param $seriya
+     * @param array $list
+     * @return array
+     */
+    public static function getPossibleDatePass($seriya, array $list)
+    {
+        $possibleDatePass = [
+            'BB_DAY' => '-',
+            'BB_NIGHT' => '-',
+            'BA_DAY' => '-',
+            'BA_NIGHT' => '-',
+        ];
+        foreach ($list as $pass) {
+            /* Временный дневной */
+            $bb = self::getActivePass(self::BB, self::PASSDAY, $list);
+            $ba = self::getActivePass(self::BA, self::PASSDAY, $list);
+            $preLast = self::getPreLastPass(self::BB, $list);
+            if (empty($bb) && empty($ba) && ($preLast['info'] == 0 || !$preLast['info'] || $preLast['info'] > 30)) {
+                $possibleDatePass['BB_DAY'] = date('d.m.Y H:i:m W');
+            } elseif ($preLast['info'] < 30){
+
+            }
+            /* ___ */
+
+        }
+        return $possibleDatePass;
     }
 
 
