@@ -441,6 +441,7 @@ $(document).ready(function () {
 
             $(".table-current-pass").html(tabl);
 
+            /* Возможная дата подачи на пропуск */
             let preLastPass = obj['data']['pre_last_pass'][0], preLastDate = '', isPreLastDouble = '-';
 
             if(preLastPass.hasOwnProperty('date')){
@@ -459,6 +460,42 @@ $(document).ready(function () {
                 '</div>' +
                 '</div>';
             $(".table-pre-pass").html(tabl);
+            /* end */
+
+
+            /* Возможная дата подачи на пропуск */
+            let possiblePass = obj['data']['possible_date_pass'];
+
+            var tabl =  '<div class="title-items  -desktop-show -mobile-show -expired">'+
+                '<div class="result-item-piece col-6">Пропуск</div>'+
+                '<div class="result-item-piece col-6">Возможная дата подачи</div>'+
+                '</div>';
+            tabl += '<div class="result-item  -desktop-show -mobile-show -expired">'+
+                '<div class="result-item-piece -possible">Дневной временный</div>' +
+                '<div class="result-item-piece -possible">'+
+                possiblePass.BA_DAY +
+                '</div>' +
+                '</div>';
+            tabl += '<div class="result-item  -desktop-show -mobile-show -expired">'+
+                '<div class="result-item-piece -possible">Дневной годовой</div>' +
+                '<div class="result-item-piece -possible">'+
+                possiblePass.BA_NIGHT +
+                '</div>' +
+                '</div>';
+            tabl += '<div class="result-item  -desktop-show -mobile-show -expired">'+
+                '<div class="result-item-piece -possible">Ночной временный</div>' +
+                '<div class="result-item-piece -possible">'+
+                possiblePass.BB_DAY +
+                '</div>' +
+                '</div>';
+            tabl += '<div class="result-item  -desktop-show -mobile-show -expired">'+
+                '<div class="result-item-piece -possible">Ночной годовой</div>' +
+                '<div class="result-item-piece -possible">'+
+                possiblePass.BB_NIGHT +
+                '</div>' +
+                '</div>';
+            $(".table-possible-pass").html(tabl);
+            /* end */
 
         }
 

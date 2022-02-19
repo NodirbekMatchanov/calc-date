@@ -838,6 +838,21 @@ ul.custom-li li {
     -ms-align-items: center;
     align-items: center;
 }
+
+.result-item .result-item-piece.-possible {
+    font-weight: bold;
+    text-transform: none;
+    position: relative;
+    width: 50%;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -o-flex;
+    display: flex;
+    justify-content: center;
+    -ms-align-items: center;
+    align-items: center;
+}
 .result-item .result-item-piece.-type {
     width: 20%;
     font-weight: bold;

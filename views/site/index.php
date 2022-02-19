@@ -39,6 +39,7 @@ $this->title = 'Калькулятор дат';
                 </div>
                 <div class="table table-current-pass"></div>
                 <div class="table table-pre-pass"></div>
+                <div class="table table-possible-pass"></div>
             </div>
         </form>
     </div>
