@@ -169,7 +169,7 @@ class Propusk extends Model
         }
         $prePass ['date'] = $pass[1]['data']['dateend'];
         $prePass ['info'] = $pass[1]['data']['info'] ?? 0;
-        $prePass ['expireDateCount'] = DateFormat::countDaysBetweenDates(date("Y-m-d"), $pass[1]['data']['dateend']);
+        $prePass ['expireDateCount'] = DateFormat::countDaysBetweenDates(time(), strtotime($pass[1]['data']['dateend']));
         $prePass ['isDouble'] = (($pass[0]['pos'] + 1) === $pass[1]['pos']) ? 'Да' : '-';
         return $prePass;
     }
