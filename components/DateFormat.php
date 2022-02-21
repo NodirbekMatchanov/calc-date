@@ -22,4 +22,8 @@ class DateFormat
 
         return floor($seconds / 86400);
     }
+
+    public static function getDatePass($datePass, $countDayToPass){
+        return date('d.m.Y H:i ', $datePass) . DateFormat::getWeekToString($datePass) .', через '. \Yii::t('app', '{n} день|дня|дней', $countDayToPass);
+    }
 }
