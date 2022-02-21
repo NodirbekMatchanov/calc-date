@@ -4,8 +4,9 @@ namespace app\components;
 
 class DateFormat
 {
-    public static function getWeekToString($date = null){
-        if(!$date){
+    public static function getWeekToString($date = null)
+    {
+        if (!$date) {
             $date = time();
         }
         $days = [
@@ -23,7 +24,24 @@ class DateFormat
         return floor($seconds / 86400);
     }
 
-    public static function getDatePass($datePass, $countDayToPass){
-        return date('d.m.Y H:i ', $datePass) . DateFormat::getWeekToString($datePass) .', через '. \Yii::t('app', '{n} день|дня|дней', $countDayToPass);
+    public static function getDatePass($datePass, $countDayToPass)
+    {
+        return date('d.m.Y H:i ', $datePass) . DateFormat::getWeekToString($datePass) .', через '. self::getPlural($countDayToPass, 'день', 'дня','дней');
+    }
+
+    public static function getPlural($number, $one, $two, $five)
+    {
+        if (($number - $number % 10) % 100 != 10) {
+            if ($number % 10 == 1) {
+                $result = $one;
+            } elseif ($number % 10 >= 2 && $number % 10 <= 4) {
+                $result = $two;
+            } else {
+                $result = $five;
+            }
+        } else {
+            $result = $five;
+        }
+        return $number.' '.$result;
     }
 }
