@@ -160,7 +160,12 @@ class Propusk extends Model
             }
         }
         if (count($pass) <= 1) {
-            return [];
+            return [
+                'date' => '',
+                'info' => '',
+                'expireDateCount' => '',
+                'isDouble' => '',
+            ];
         }
         $prePass ['date'] = $pass[1]['data']['dateend'];
         $prePass ['info'] = $pass[1]['data']['info'] ?? 0;
