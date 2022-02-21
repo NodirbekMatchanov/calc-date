@@ -310,10 +310,10 @@ $(document).ready(function () {
                 if(data.statusCode == 200){
                     parseData(data);
                 } else {
-                    $('.table').html('');
+                    $('.table-current-pass').html('');
                 }
             }).fail(function (err) {
-                $('.table').html(err.responseJSON.message);
+                $('.table-current-pass').html(err.responseJSON.message);
                 $('.loader').addClass('hidden');
             });
         }
