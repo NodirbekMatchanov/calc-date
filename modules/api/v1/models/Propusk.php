@@ -163,7 +163,7 @@ class Propusk extends Model
             return [];
         }
         $prePass ['date'] = $pass[1]['data']['dateend'];
-        $prePass ['info'] = $pass[1]['data']['info'];
+        $prePass ['info'] = $pass[1]['data']['info'] ?? 0;
         $prePass ['expireDateCount'] = DateFormat::countDaysBetweenDates(date("Y-m-d"), $pass[1]['data']['dateend']);
         $prePass ['isDouble'] = (($pass[0]['pos'] + 1) === $pass[1]['pos']) ? 'Да' : '-';
         return $prePass;
@@ -204,15 +204,15 @@ class Propusk extends Model
         $ba = self::getActivePass(self::PASSDAY, self::BA, $list);
 
         $preLast = self::getPreLastPass(self::BB, $list);
-        if ((empty($bb) || empty($ba)) && ($preLast['info'] == 0 || !$preLast['info'] || $preLast ['expireDateCount'] > 30)) {
+        if ((empty($bb) || empty($ba)) && ($preLast ['expireDateCount'] == 0 || !$preLast ['expireDateCount'] || $preLast ['expireDateCount'] > 30)) {
             $possibleDatePass['BB_DAY'] = date('d.m.Y H:i ') . DateFormat::getWeekToString();
         } elseif ($preLast ['expireDateCount'] < 30) {
             $possibleDatePass['BB_DAY'] = date('d.m.Y H:i ', strtotime($preLast['date']) + (30 * 24 * 3600)) . DateFormat::getWeekToString();
         } elseif (!empty($ba)) {
             $possibleDatePass['BB_DAY'] = date('d.m.Y H:i ', strtotime($ba[0]['dateend']) - (4 * 24 * 3600)) . DateFormat::getWeekToString();
-        } elseif (!empty($bb) && ($preLast['info'] > 30 || $preLast['info'] == 0 || !$preLast['info'])) {
+        } elseif (!empty($bb) && ($preLast ['expireDateCount'] > 30 || $preLast ['expireDateCount'] == 0 || !$preLast ['expireDateCount'])) {
             $possibleDatePass['BB_DAY'] = date('d.m.Y H:i ', strtotime($bb[0]['dateend']) - (4 * 24 * 3600)) . DateFormat::getWeekToString();
-        } elseif (empty($bb) && empty($ba) && $preLast['info'] < 30) {
+        } elseif (empty($bb) && empty($ba) && $preLast ['expireDateCount'] < 30) {
             $possibleDatePass['BB_DAY'] = date('d.m.Y H:i ', strtotime($preLast['date']) + (30 * 24 * 3600)) . DateFormat::getWeekToString();
         }
         /* ___ */
@@ -221,13 +221,13 @@ class Propusk extends Model
         $bb = self::getActivePass(self::PASSNIGHT, self::BB, $list);
         $ba = self::getActivePass(self::PASSNIGHT, self::BA, $list);
         $preLast = self::getPreLastPass(self::BB, $list);
-        if ((empty($bb) || empty($ba)) && ($preLast['info'] == 0 || !$preLast['info'] || $preLast ['expireDateCount'] > 30)) {
+        if ((empty($bb) || empty($ba)) && ($preLast ['expireDateCount'] == 0 || !$preLast ['expireDateCount'] || $preLast ['expireDateCount'] > 30)) {
             $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i ') . DateFormat::getWeekToString();
         } elseif ($preLast ['expireDateCount'] < 30) {
             $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i ', strtotime($preLast['date']) + (30 * 24 * 3600)) . DateFormat::getWeekToString();
         } elseif (!empty($ba)) {
             $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i ', strtotime($ba[0]['dateend']) - (4 * 24 * 3600)) . DateFormat::getWeekToString();
-        } elseif (!empty($bb) && ($preLast ['expireDateCount'] > 30 || $preLast['info'] == 0 || !$preLast['info'])) {
+        } elseif (!empty($bb) && ($preLast ['expireDateCount'] > 30 || $preLast ['expireDateCount'] == 0 || !$preLast ['expireDateCount'])) {
             $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i ', strtotime($bb[0]['dateend']) - (4 * 24 * 3600)) . DateFormat::getWeekToString();
         } elseif (empty($bb) && empty($ba) && $preLast ['expireDateCount'] < 30) {
             $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i ', strtotime($preLast['date']) + (30 * 24 * 3600)) . DateFormat::getWeekToString();
