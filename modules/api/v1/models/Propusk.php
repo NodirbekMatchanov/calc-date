@@ -209,16 +209,24 @@ class Propusk extends Model
         $ba = self::getActivePass(self::PASSDAY, self::BA, $list);
 
         $preLast = self::getPreLastPass(self::BB, $list);
-        if ((empty($bb) || empty($ba)) && ($preLast ['expireDateCount'] == 0 || !$preLast ['expireDateCount'] || $preLast ['expireDateCount'] > 30)) {
+        if ((empty($bb) || empty($ba)) && ($preLast ['expireDateCount'] == 0 || !$preLast ['expireDateCount'] || $preLast ['expireDateCount'] >= 30)) {
             $possibleDatePass['BB_DAY'] = date('d.m.Y H:i ') . DateFormat::getWeekToString();
         } elseif ($preLast ['expireDateCount'] < 30) {
-            $possibleDatePass['BB_DAY'] = date('d.m.Y H:i ', strtotime($preLast['date']) + (30 * 24 * 3600)) . DateFormat::getWeekToString();
+            $datePass = strtotime($preLast['date']) + (30 * 24 * 3600);
+            $countDayToPass = DateFormat::countDaysBetweenDates($datePass, date("Y-m-d"));
+            $possibleDatePass['BB_DAY'] = date('d.m.Y H:i ', $datePass) . DateFormat::getWeekToString($datePass).', '. $countDayToPass. ' дней';
         } elseif (!empty($ba)) {
-            $possibleDatePass['BB_DAY'] = date('d.m.Y H:i ', strtotime($ba[0]['dateend']) - (4 * 24 * 3600)) . DateFormat::getWeekToString();
+            $datePass = strtotime($ba[0]['dateend']) - (4 * 24 * 3600);
+            $countDayToPass = DateFormat::countDaysBetweenDates($datePass, date("Y-m-d"));
+            $possibleDatePass['BB_DAY'] = date('d.m.Y H:i ', $datePass) . DateFormat::getWeekToString($datePass).', '. $countDayToPass. ' дней';
         } elseif (!empty($bb) && ($preLast ['expireDateCount'] > 30 || $preLast ['expireDateCount'] == 0 || !$preLast ['expireDateCount'])) {
-            $possibleDatePass['BB_DAY'] = date('d.m.Y H:i ', strtotime($bb[0]['dateend']) - (4 * 24 * 3600)) . DateFormat::getWeekToString();
+            $datePass = strtotime($bb[0]['dateend']) - (4 * 24 * 3600);
+            $countDayToPass = DateFormat::countDaysBetweenDates($datePass, date("Y-m-d"));
+            $possibleDatePass['BB_DAY'] = date('d.m.Y H:i ', $datePass) . DateFormat::getWeekToString($datePass).', '. $countDayToPass. ' дней';
         } elseif (empty($bb) && empty($ba) && $preLast ['expireDateCount'] < 30) {
-            $possibleDatePass['BB_DAY'] = date('d.m.Y H:i ', strtotime($preLast['date']) + (30 * 24 * 3600)) . DateFormat::getWeekToString();
+            $datePass = strtotime($preLast['date']) + (30 * 24 * 3600);
+            $countDayToPass = DateFormat::countDaysBetweenDates($datePass, date("Y-m-d"));
+            $possibleDatePass['BB_DAY'] = date('d.m.Y H:i ', strtotime($preLast['date']) + (30 * 24 * 3600)). DateFormat::getWeekToString($datePass) .', '. $countDayToPass. ' дней';
         }
         /* ___ */
 
@@ -229,20 +237,31 @@ class Propusk extends Model
         if ((empty($bb) || empty($ba)) && ($preLast ['expireDateCount'] == 0 || !$preLast ['expireDateCount'] || $preLast ['expireDateCount'] > 30)) {
             $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i ') . DateFormat::getWeekToString();
         } elseif ($preLast ['expireDateCount'] < 30) {
-            $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i ', strtotime($preLast['date']) + (30 * 24 * 3600)) . DateFormat::getWeekToString();
+            $datePass = strtotime($preLast['date']) + (30 * 24 * 3600);
+            $countDayToPass = DateFormat::countDaysBetweenDates($datePass, date("Y-m-d"));
+            $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i ', $datePass) . DateFormat::getWeekToString($datePass).', '. $countDayToPass. ' дней';
         } elseif (!empty($ba)) {
-            $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i ', strtotime($ba[0]['dateend']) - (4 * 24 * 3600)) . DateFormat::getWeekToString();
+            $datePass = strtotime($ba[0]['dateend']) - (4 * 24 * 3600);
+            $countDayToPass = DateFormat::countDaysBetweenDates($datePass, date("Y-m-d"));
+            $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i ', $datePass) . DateFormat::getWeekToString($datePass).', '. $countDayToPass. ' дней';
         } elseif (!empty($bb) && ($preLast ['expireDateCount'] > 30 || $preLast ['expireDateCount'] == 0 || !$preLast ['expireDateCount'])) {
-            $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i ', strtotime($bb[0]['dateend']) - (4 * 24 * 3600)) . DateFormat::getWeekToString();
+            $datePass = strtotime($bb[0]['dateend']) - (4 * 24 * 3600);
+            $countDayToPass = DateFormat::countDaysBetweenDates($datePass, date("Y-m-d"));
+            $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i ', $datePass) . DateFormat::getWeekToString($datePass).', '. $countDayToPass. ' дней';
         } elseif (empty($bb) && empty($ba) && $preLast ['expireDateCount'] < 30) {
-            $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i ', strtotime($preLast['date']) + (30 * 24 * 3600)) . DateFormat::getWeekToString();
+            $datePass = strtotime($preLast['date']) + (30 * 24 * 3600);
+            $countDayToPass = DateFormat::countDaysBetweenDates($datePass, date("Y-m-d"));
+            $possibleDatePass['BB_NIGHT'] = date('d.m.Y H:i ', $datePass) . DateFormat::getWeekToString($datePass).', '. $countDayToPass. ' дней';
         }
         /* ___ */
 
         /* Годовой дневной */
         $ba = self::getActivePass(self::PASSDAY, self::BA, $list);
         if (!empty($ba) && $ba[0]['info'] > 60) {
-            $possibleDatePass['BA_DAY'] = date('d.m.Y H:i ', strtotime($ba[0]['dateend']) - (60 * 24 * 3600)) . DateFormat::getWeekToString();
+            $datePass = strtotime($ba[0]['dateend']) - (60 * 24 * 3600);
+            $countDayToPass = DateFormat::countDaysBetweenDates($datePass, date("Y-m-d"));
+            $possibleDatePass['BA_DAY'] = date('d.m.Y H:i ', $datePass) . DateFormat::getWeekToString($datePass).', '. $countDayToPass. ' дней';
+
         } else {
             $possibleDatePass['BA_DAY'] = date('d.m.Y H:i ') . DateFormat::getWeekToString();
         }
@@ -251,7 +270,9 @@ class Propusk extends Model
         /* Годовой дневной */
         $ba = self::getActivePass(self::PASSNIGHT, self::BA, $list);
         if (!empty($ba) && $ba[0]['info'] > 60) {
-            $possibleDatePass['BA_NIGHT'] = date('d.m.Y H:i ', strtotime($ba[0]['dateend']) - (60 * 24 * 3600)) . DateFormat::getWeekToString();;
+            $datePass = strtotime($ba[0]['dateend']) - (60 * 24 * 3600);
+            $countDayToPass = DateFormat::countDaysBetweenDates($datePass, date("Y-m-d"));
+            $possibleDatePass['BA_NIGHT'] = date('d.m.Y H:i ', $datePass) . DateFormat::getWeekToString($datePass).', '. $countDayToPass. ' дней';
         } else {
             $possibleDatePass['BA_NIGHT'] = date('d.m.Y H:i ') . DateFormat::getWeekToString();
         }
