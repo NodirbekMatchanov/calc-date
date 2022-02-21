@@ -20,11 +20,11 @@ class AppAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'css/site.css',
+        'css/site.css?v=1.1',
         'css/spinner.css',
     ];
     public $js = [
-        'js/main.js',
+        'js/main.js?v=1.2',
         'js/jquery.inputmask.bundle.js',
     ];
     public $depends = [

@@ -473,25 +473,25 @@ $(document).ready(function () {
             tabl += '<div class="result-item  -desktop-show -mobile-show -expired">'+
                 '<div class="result-item-piece -possible">Дневной временный</div>' +
                 '<div class="result-item-piece -possible">'+
-                possiblePass.BA_DAY +
-                '</div>' +
-                '</div>';
-            tabl += '<div class="result-item  -desktop-show -mobile-show -expired">'+
-                '<div class="result-item-piece -possible">Дневной годовой</div>' +
-                '<div class="result-item-piece -possible">'+
-                possiblePass.BA_NIGHT +
+                possiblePass.BB_DAY +
                 '</div>' +
                 '</div>';
             tabl += '<div class="result-item  -desktop-show -mobile-show -expired">'+
                 '<div class="result-item-piece -possible">Ночной временный</div>' +
                 '<div class="result-item-piece -possible">'+
-                possiblePass.BB_DAY +
+                possiblePass.BB_NIGHT +
+                '</div>' +
+                '</div>';
+            tabl += '<div class="result-item  -desktop-show -mobile-show -expired">'+
+                '<div class="result-item-piece -possible">Дневной годовой</div>' +
+                '<div class="result-item-piece -possible">'+
+                possiblePass.BA_DAY +
                 '</div>' +
                 '</div>';
             tabl += '<div class="result-item  -desktop-show -mobile-show -expired">'+
                 '<div class="result-item-piece -possible">Ночной годовой</div>' +
                 '<div class="result-item-piece -possible">'+
-                possiblePass.BB_NIGHT +
+                possiblePass.BA_NIGHT +
                 '</div>' +
                 '</div>';
             $(".table-possible-pass").html(tabl);
